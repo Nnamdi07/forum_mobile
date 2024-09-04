@@ -1,3 +1,28 @@
+# Set Dart as the main language
 *.dart linguist-language=Dart
-android/** linguist-vendored
+
+# Mark C++ files as vendored
+*.cpp linguist-vendored
+*.h linguist-vendored
+*.cc linguist-vendored
+*.hpp linguist-vendored
+
+# Mark CMake files as vendored
+*.cmake linguist-vendored
+CMakeLists.txt linguist-vendored
+
+# Mark Objective-C/Swift as vendored for iOS
+*.m linguist-vendored
+*.swift linguist-vendored
+
+# Mark Java/Kotlin as vendored for Android
+*.kt linguist-vendored
+*.java linguist-vendored
+
+# Exclude iOS and Android build directories
 ios/** linguist-vendored
+android/** linguist-vendored
+
+# Ignore other potentially large libraries
+**/Pods/** linguist-vendored
+**/build/** linguist-vendored
