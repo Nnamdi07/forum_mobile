@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:forum/views/register_page.dart';
+import 'package:forum/views/login_page.dart';
 import 'package:get/get.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -41,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Register'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -50,6 +52,13 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                      labelText: 'Username', border: OutlineInputBorder())),
+              const SizedBox(
+                height: 20,
+              ),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
@@ -95,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _login,
-                child: const Text('Login'),
+                child: const Text('Submit'),
                 style: ElevatedButton.styleFrom(
                   minimumSize:
                       const Size.fromHeight(50), // Make the button full width
@@ -104,9 +113,9 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 20),
               TextButton(
                   onPressed: () {
-                    Get.to(const RegisterPage());
+                    Get.to(const LoginPage());
                   },
-                  child: const Text('Register'))
+                  child: const Text('Login'))
             ],
           ),
         ),
@@ -117,6 +126,6 @@ class _LoginPageState extends State<LoginPage> {
 
 void main() {
   runApp(const MaterialApp(
-    home: LoginPage(),
+    home: RegisterPage(),
   ));
 }
