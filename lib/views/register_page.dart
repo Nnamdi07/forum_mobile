@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forum/contollers/authentication.dart';
 import 'package:forum/views/login_page.dart';
 import 'package:get/get.dart';
 
@@ -14,6 +15,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthenticationController _authenticationController =
+      Get.put(AuthenticationController());
   bool _obscureText = true;
 
   @override
@@ -102,14 +105,23 @@ class _RegisterPageState extends State<RegisterPage> {
                 },
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _login,
-                child: const Text('Submit'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize:
-                      const Size.fromHeight(50), // Make the button full width
-                ),
-              ),
+              Obx(() {
+                return _authenticationController.isLoading.value
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: () async {
+                          await _authenticationController.register(
+                              name: _nameController.text.trim(),
+                              email: _emailController.text.trim(),
+                              password: _passwordController.text.trim());
+                        },
+                        child: const Text('Submit'),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(
+                              50), // Make the button full width
+                        ),
+                      );
+              }),
               const SizedBox(height: 20),
               TextButton(
                   onPressed: () {
