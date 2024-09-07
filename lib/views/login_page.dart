@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forum/views/register_page.dart';
+import 'package:forum/contollers/authentication.dart';
 import 'package:get/get.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,6 +14,8 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthenticationController _authenticationController =
+      Get.put(AuthenticationController());
   bool _obscureText = true;
 
   @override

@@ -33,13 +33,10 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      // Handle login logic
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Processing Data')),
-      );
-    }
+  void _clearInputs() {
+    _nameController.clear();
+    _emailController.clear();
+    _passwordController.clear();
   }
 
   @override
@@ -56,12 +53,11 @@ class _RegisterPageState extends State<RegisterPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                      labelText: 'Username', border: OutlineInputBorder())),
-              const SizedBox(
-                height: 20,
+                controller: _nameController,
+                decoration: const InputDecoration(
+                    labelText: 'Username', border: OutlineInputBorder()),
               ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
@@ -98,7 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your password';
                   }
-                  if (value.length < 6) {
+                  if (value.length < 8) {
                     return 'Password must be at least 6 characters long';
                   }
                   return null;
@@ -110,15 +106,24 @@ class _RegisterPageState extends State<RegisterPage> {
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
                         onPressed: () async {
-                          await _authenticationController.register(
+                          if (_formKey.currentState!.validate()) {
+                            var response =
+                                await _authenticationController.register(
                               name: _nameController.text.trim(),
                               email: _emailController.text.trim(),
-                              password: _passwordController.text.trim());
+                              password: _passwordController.text.trim(),
+                            );
+
+                            // Clear inputs after successful registration
+                            if (response.statusCode == 201) {
+                              _clearInputs();
+                            }
+                          }
                         },
                         child: const Text('Submit'),
                         style: ElevatedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(
-                              50), // Make the button full width
+                          minimumSize:
+                              const Size.fromHeight(50), // Full width button
                         ),
                       );
               }),
@@ -127,7 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   onPressed: () {
                     Get.to(const LoginPage());
                   },
-                  child: const Text('Login'))
+                  child: const Text('Login')),
             ],
           ),
         ),

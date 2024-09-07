@@ -45,6 +45,8 @@ class AuthenticationController extends GetxController {
         );
 
         print(json.decode(response.body));
+
+        return response; // Return the response to handle in the UI
       } else {
         isLoading.value = false;
         String errorMessage = 'Registration failed';
