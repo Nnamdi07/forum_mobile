@@ -31,6 +31,11 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  void _clearInputs() {
+    _emailController.clear();
+    _passwordController.clear();
+  }
+
   void _login() {
     if (_formKey.currentState!.validate()) {
       // Handle login logic
@@ -96,14 +101,31 @@ class _LoginPageState extends State<LoginPage> {
                 },
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _login,
-                child: const Text('Login'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize:
-                      const Size.fromHeight(50), // Make the button full width
-                ),
-              ),
+              Obx(() {
+                return _authenticationController.isLoading.value
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            var response =
+                                await _authenticationController.login(
+                              email: _emailController.text.trim(),
+                              password: _passwordController.text.trim(),
+                            );
+
+                            // Clear inputs after successful registration
+                            if (response.statusCode == 201) {
+                              _clearInputs();
+                            }
+                          }
+                        },
+                        child: const Text('Submit'),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize:
+                              const Size.fromHeight(50), // Full width button
+                        ),
+                      );
+              }),
               const SizedBox(height: 20),
               TextButton(
                   onPressed: () {
