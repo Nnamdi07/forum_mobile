@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:forum/contollers/authentication.dart';
+import 'package:forum/controllers/authentication.dart';
 import 'package:forum/views/login_page.dart';
 import 'package:get/get.dart';
 

@@ -124,86 +124,109 @@ class AuthenticationController extends GetxController {
         'password': password,
       };
 
-      var response = await http.post(
-        Uri.parse(url + '/login'),
-        headers: {
-          'Accept': 'application/json',
-        },
-        body: data,
-      );
+      var response;
 
+      try {
+        // Try making the HTTP request
+        response = await http.post(
+          Uri.parse(url + '/login'),
+          headers: {
+            'Accept': 'application/json',
+          },
+          body: data,
+        );
+      } catch (e) {
+        // Handle network errors or any issue during the HTTP request
+        isLoading.value = false;
+        Get.snackbar(
+          "Network Error",
+          "Please check your internet connection.",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(16.0),
+          duration: const Duration(seconds: 4),
+        );
+        return;
+      }
+
+      // Check if the response is null or contains a valid status code
+      if (response == null) {
+        isLoading.value = false;
+        Get.snackbar(
+          "Error",
+          "Something went wrong. Please try again.",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(16.0),
+          duration: const Duration(seconds: 4),
+        );
+        return;
+      }
+
+      // If the request was successful
       if (response.statusCode == 200) {
         isLoading.value = false;
         token.value = json.decode(response.body)['token'];
         box.write('token', token.value);
         Get.offAll(() => const HomePage());
 
-        // Show success toast
         Get.snackbar(
-          "Success", // Title of the message
-          "Login successful!", // Message content
-          snackPosition: SnackPosition.TOP, // Position on the screen
-          backgroundColor: Colors.green, // Background color
-          colorText: Colors.white, // Text color
-          margin: const EdgeInsets.all(16.0), // Padding around the toast
-          duration:
-              const Duration(seconds: 3), // How long it should be displayed
+          "Success",
+          "Login successful!",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(16.0),
+          duration: const Duration(seconds: 3),
         );
-
-        print(json.decode(response.body));
-
-        return response; // Return the response to handle in the UI
       } else {
         isLoading.value = false;
-        String errorMessage = 'Login failed';
 
-        // If registration fails, get the error message from the response
-        if (response.body.isNotEmpty) {
-          var responseData = json.decode(response.body);
+        // Handle response error if status is not 200
+        var responseData = json.decode(response.body);
 
-          // Check if there are validation errors in the 'errors' field
-          if (responseData.containsKey('errors')) {
-            // Collect the detailed error messages
-            String errorMessages = '';
+        if (responseData.containsKey('errors')) {
+          // Collect and display validation errors
+          String errorMessages = '';
+          responseData['errors'].forEach((key, value) {
+            errorMessages += value.join(', ') + '\n';
+          });
 
-            responseData['errors'].forEach((key, value) {
-              // 'value' is usually a list of error messages, so join them
-              errorMessages += value.join(', ') +
-                  '\n'; // Join error messages for a field and add newline
-            });
-
-            // Show error toast with the detailed validation errors
-            Get.snackbar(
-              "Validation Error", // Title of the message
-              errorMessages
-                  .trim(), // Detailed error messages, trimmed to remove the trailing newline
-              snackPosition: SnackPosition.TOP, // Position on the screen
-              backgroundColor: Colors.red, // Background color
-              colorText: Colors.white, // Text color
-              margin: const EdgeInsets.all(16.0), // Padding around the toast
-              duration:
-                  const Duration(seconds: 4), // How long it should be displayed
-            );
-          } else {
-            // Show general error message if no validation errors exist
-            Get.snackbar(
-              "Something is wrong", // Title of the message
-              responseData['message'] ??
-                  'An error occurred', // Extract and display the exact error message
-              snackPosition: SnackPosition.TOP, // Position on the screen
-              backgroundColor: Colors.red, // Background color
-              colorText: Colors.white, // Text color
-              margin: const EdgeInsets.all(16.0), // Padding around the toast
-              duration:
-                  const Duration(seconds: 4), // How long it should be displayed
-            );
-          }
+          Get.snackbar(
+            "Validation Error",
+            errorMessages.trim(),
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            margin: const EdgeInsets.all(16.0),
+            duration: const Duration(seconds: 4),
+          );
+        } else {
+          // Show general error message
+          Get.snackbar(
+            "Login Failed",
+            responseData['message'] ?? 'An error occurred.',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            margin: const EdgeInsets.all(16.0),
+            duration: const Duration(seconds: 4),
+          );
         }
-
-        print(json.decode(response.body));
       }
     } catch (e) {
       isLoading.value = false;
+      Get.snackbar(
+        "Error",
+        "An unexpected error occurred. Please try again.",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16.0),
+        duration: const Duration(seconds: 4),
+      );
       print(e.toString());
     }
   }
