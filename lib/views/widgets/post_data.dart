@@ -16,11 +16,15 @@ class PostData extends StatelessWidget {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text("Nnamdi  Ijeomah"),
-        Text("nnamdi@gmail.com"),
+        Text(
+          "nnamdi@gmail.com",
+          style: TextStyle(fontSize: 10, color: Colors.black),
+        ),
         SizedBox(
           height: 10,
         ),
-        Text("Random text"),
+        Text(
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
         Row(
           children: [
             IconButton(
