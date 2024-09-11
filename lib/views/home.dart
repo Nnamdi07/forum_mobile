@@ -64,8 +64,6 @@ class _HomePageState extends State<HomePage> {
               PostData(),
               const SizedBox(height: 20),
               PostData(),
-              const SizedBox(height: 20),
-              PostData(),
             ],
           ),
         ),
