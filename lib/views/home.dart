@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'widgets/post_field.dart';
 import 'widgets/post_data.dart';
+import 'package:get/get.dart';
+import 'package:forum/controllers/postController.dart'; // Corrected import path
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,7 +13,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final TextEditingController _postController = TextEditingController();
+  final PostController _postController = Get.put(PostController());
+  final TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +36,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               PostField(
                 hintText: "What are you thinking?",
-                controller: _postController,
+                controller: _textController,
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -53,17 +56,21 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 30),
               const Text('Posts'),
               const SizedBox(height: 20),
-              PostData(),
-              const SizedBox(height: 20),
-              PostData(),
-              const SizedBox(height: 20),
-              PostData(),
-              const SizedBox(height: 20),
-              PostData(),
-              const SizedBox(height: 20),
-              PostData(),
-              const SizedBox(height: 20),
-              PostData(),
+              Obx(() {
+                return _postController.isLoading.value
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _postController.posts.value.length,
+                        itemBuilder: (context, index) {
+                          return PostData(
+                            post: _postController.posts.value[index],
+                          );
+                        },
+                      );
+              }),
             ],
           ),
         ),
