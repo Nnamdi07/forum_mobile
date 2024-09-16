@@ -16,6 +16,10 @@ class _HomePageState extends State<HomePage> {
   final PostController _postController = Get.put(PostController());
   final TextEditingController _textController = TextEditingController();
 
+  void _clearInputs() {
+    _textController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     final box = GetStorage();
@@ -48,10 +52,19 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 50.0, vertical: 10.0),
                 ),
-                onPressed: () {
+                onPressed: () async {
+                  await _postController.createPost(
+                      content: _textController.text.trim());
+                  _clearInputs();
+                  _postController.getAllPosts();
+
                   // Add your post logic here
                 },
-                child: const Text('Post'),
+                child: Obx(() {
+                  return _postController.isLoading.value
+                      ? const CircularProgressIndicator()
+                      : Text('Post');
+                }),
               ),
               const SizedBox(height: 30),
               const Text('Posts'),
@@ -65,8 +78,14 @@ class _HomePageState extends State<HomePage> {
                         shrinkWrap: true,
                         itemCount: _postController.posts.value.length,
                         itemBuilder: (context, index) {
-                          return PostData(
-                            post: _postController.posts.value[index],
+                          return Column(
+                            children: [
+                              PostData(
+                                post: _postController.posts.value[index],
+                              ),
+                              const SizedBox(
+                                  height: 20), // Add space between each post
+                            ],
                           );
                         },
                       );

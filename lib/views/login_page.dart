@@ -38,11 +38,6 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() async {
     if (_formKey.currentState!.validate()) {
-      // Show loading indicator
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Processing Data')),
-      );
-
       // Call login method
       var response = await _authenticationController.login(
         email: _emailController.text.trim(),
@@ -52,11 +47,6 @@ class _LoginPageState extends State<LoginPage> {
       // Handle response
       if (response != null && response.statusCode == 200) {
         _clearInputs();
-      } else {
-        // Show error message if login fails
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login failed. Please try again.')),
-        );
       }
     }
   }

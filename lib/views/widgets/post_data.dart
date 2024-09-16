@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forum/models/post_model.dart';
+import 'package:forum/views/post_details.dart';
+import 'package:get/get.dart';
 
 class PostData extends StatelessWidget {
   const PostData({
@@ -35,7 +37,11 @@ class PostData extends StatelessWidget {
               icon: Icon(Icons.thumb_up),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Get.to(() => PostDetails(
+                      post: post,
+                    ));
+              },
               icon: Icon(Icons.comment),
             )
           ],
