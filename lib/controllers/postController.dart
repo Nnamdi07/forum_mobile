@@ -1,3 +1,4 @@
+import 'package:forum/models/comment_model.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -9,6 +10,7 @@ import '../models/post_model.dart'; // To handle JSON decoding
 
 class PostController extends GetxController {
   Rx<List<PostModel>> posts = Rx<List<PostModel>>([]);
+  Rx<List<CommentModel>> comments = Rx<List<CommentModel>>([]);
   final isLoading = false.obs;
   final box = GetStorage();
 
@@ -100,6 +102,61 @@ class PostController extends GetxController {
       }
     } catch (e) {
       isLoading.value = false;
+      print(e.toString());
+    }
+  }
+
+  Future getComments(id) async {
+    try {
+      comments.value.clear();
+      isLoading.value = true;
+
+      var response = await http.get(
+        Uri.parse(url + '/feed/$id/comments'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${box.read('token')}',
+        },
+      );
+      if (response.statusCode == 200) {
+        isLoading.value = false;
+        for (var item in json.decode(response.body)['comments']) {
+          comments.value.add(CommentModel.fromJson(item));
+        }
+        print(json.decode(response.body));
+      } else {
+        isLoading.value = false;
+        print(json.decode(response.body));
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future createComment(id, {required String content}) async {
+    try {
+      isLoading.value = true;
+
+      var data = {'content': content};
+      var response = await http.post(
+        Uri.parse(url + '/feed/$id/comment'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${box.read('token')}',
+        },
+        body: data,
+      );
+      if (response.statusCode == 200) {
+        isLoading.value = false;
+        for (var item in json.decode(response.body)['comments']) {
+          comments.value.add(CommentModel.fromJson(item));
+        }
+        print(json.decode(response.body));
+      } else {
+        isLoading.value = false;
+        print(json.decode(response.body));
+      }
+    } catch (e) {
       print(e.toString());
     }
   }
