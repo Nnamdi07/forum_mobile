@@ -1,6 +1,6 @@
-// To parse this JSON data, do
-//
-//     final postModel = postModelFromJson(jsonString);
+// // To parse this JSON data, do
+// //
+// //     final postModel = postModelFromJson(jsonString);
 
 import 'dart:convert';
 
@@ -15,6 +15,7 @@ class PostModel {
   DateTime? createdAt;
   DateTime? updatedAt;
   User? user;
+  bool? liked;
 
   PostModel({
     required this.id,
@@ -23,6 +24,7 @@ class PostModel {
     required this.createdAt,
     required this.updatedAt,
     required this.user,
+    this.liked,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) => PostModel(
@@ -32,6 +34,7 @@ class PostModel {
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         user: User.fromJson(json["user"]),
+        liked: json["liked"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -41,6 +44,7 @@ class PostModel {
         "created_at": createdAt!.toIso8601String(),
         "updated_at": updatedAt!.toIso8601String(),
         "user": user!.toJson(),
+        "liked": liked,
       };
 }
 

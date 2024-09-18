@@ -151,9 +151,86 @@ class PostController extends GetxController {
         for (var item in json.decode(response.body)['comments']) {
           comments.value.add(CommentModel.fromJson(item));
         }
+
+        // Show success toast
+        Get.snackbar(
+          "Success", // Title of the message
+          "Comment added successfully!", // Message content
+          snackPosition: SnackPosition.TOP, // Position on the screen
+          backgroundColor: Colors.green, // Background color
+          colorText: Colors.white, // Text color
+          margin: const EdgeInsets.all(16.0), // Padding around the toast
+          duration:
+              const Duration(seconds: 3), // How long it should be displayed
+        );
+
         print(json.decode(response.body));
       } else {
         isLoading.value = false;
+
+        // Show success toast
+        Get.snackbar(
+          "Error", // Title of the message
+          "Content is required", // Message content
+          snackPosition: SnackPosition.TOP, // Position on the screen
+          backgroundColor: Colors.red, // Background color
+          colorText: Colors.white, // Text color
+          margin: const EdgeInsets.all(16.0), // Padding around the toast
+          duration:
+              const Duration(seconds: 3), // How long it should be displayed
+        );
+        print(json.decode(response.body));
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future likePost(id) async {
+    try {
+      isLoading.value = true;
+
+      var response = await http.post(
+        Uri.parse(url + '/feed/like/$id'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${box.read('token')}',
+        },
+      );
+      if (response.statusCode == 200 &&
+          json.decode(response.body)['message'] == 'liked post successfully') {
+        isLoading.value = false;
+
+        // Show success toast
+        Get.snackbar(
+          "Success", // Title of the message
+          "Post Liked successfully!", // Message content
+          snackPosition: SnackPosition.TOP, // Position on the screen
+          backgroundColor: Colors.green, // Background color
+          colorText: Colors.white, // Text color
+          margin: const EdgeInsets.all(16.0), // Padding around the toast
+          duration:
+              const Duration(seconds: 3), // How long it should be displayed
+        );
+
+        print(json.decode(response.body));
+      } else if (response.statusCode == 200 &&
+          json.decode(response.body)['message'] ==
+              'unliked post successfully') {
+        isLoading.value = false;
+
+        // Show success toast
+        Get.snackbar(
+          "Success", // Title of the message
+          "Post Unliked successfully!", // Message content
+          snackPosition: SnackPosition.TOP, // Position on the screen
+          backgroundColor: Colors.orange, // Background color
+          colorText: Colors.black, // Text color
+          margin: const EdgeInsets.all(16.0), // Padding around the toast
+          duration:
+              const Duration(seconds: 3), // How long it should be displayed
+        );
+
         print(json.decode(response.body));
       }
     } catch (e) {
