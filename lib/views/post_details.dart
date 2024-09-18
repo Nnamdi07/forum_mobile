@@ -17,6 +17,10 @@ class _PostDetailsState extends State<PostDetails> {
   final TextEditingController _commentController = TextEditingController();
   final PostController _postController = Get.put(PostController());
 
+  void _clearInputs() {
+    _commentController.clear();
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -43,28 +47,6 @@ class _PostDetailsState extends State<PostDetails> {
               PostData(post: widget.post),
 
               const SizedBox(height: 20),
-
-              // Obx(() {
-              //   return _postController.isLoading.value
-              //       ? Center(
-              //           child: CircularProgressIndicator(),
-              //         )
-              //       : ListView.builder(
-              //           shrinkWrap: true,
-              //           itemCount: _postController.comments.value.length,
-              //           itemBuilder: (context, index) {
-              //             return Column(
-              //               children: [
-              //                 PostData(
-              //                   post: _postController.posts.value[index],
-              //                 ),
-              //                 const SizedBox(
-              //                     height: 20), // Add space between each post
-              //               ],
-              //             );
-              //           },
-              //         );
-              // }),
 
               Container(
                   height: 300,
@@ -118,8 +100,12 @@ class _PostDetailsState extends State<PostDetails> {
               ),
               const SizedBox(height: 10), // Moved SizedBox here
               ElevatedButton(
-                onPressed: () {
-                  // Your button logic here
+                onPressed: () async {
+                  await _postController.createComment(widget.post.id,
+                      content: _commentController.text.trim());
+                  _clearInputs();
+                  _postController
+                      .getComments(widget.post.id); // Your button logic here
                 },
                 child: const Text('Submit'), // Added child widget to the button
                 style: ElevatedButton.styleFrom(
